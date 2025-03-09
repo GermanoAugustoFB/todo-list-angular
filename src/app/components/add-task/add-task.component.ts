@@ -11,13 +11,13 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./add-task.component.css'],
 })
 export class AddTaskComponent {
-  newTask: Task = { id: 0, title: '', description: '' };
+  newTask: Task = { id: 0, title: '', description: '', completed: false };
 
   constructor(private taskService: TaskService) {}
 
   addTask(): void {
-    this.newTask.id = Date.now(); // Gera um ID único
+    this.newTask.id = Date.now();
     this.taskService.addTask(this.newTask);
-    this.newTask = { id: 0, title: '', description: '' }; // Limpa o formulário
+    this.newTask = { id: 0, title: '', description: '', completed: false }; 
   }
 }

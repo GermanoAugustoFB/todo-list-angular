@@ -1,6 +1,23 @@
-<div *ngFor="let task of tasks">
-  <app-task-item 
-    [task]="task" 
-    (deleteTask)="onDeleteTask($event)">
-  </app-task-item>
-</div>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Task List</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-list>
+      <mat-list-item>
+        <app-task-item
+        *ngFor="let task of tasks"
+        [task]="task"
+        (editTask)="onEditTask(task)"
+        (deleteTask)="onDeleteTask(task.id)"
+      ></app-task-item>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+  <mat-card-actions>
+    <mat-form-field appearance="fill">
+      <input matInput [(ngModel)]="newTask" placeholder="Nova tarefa" />
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="onAddTask()">Adicionar</button>
+  </mat-card-actions>
+</mat-card>

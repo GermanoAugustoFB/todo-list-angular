@@ -1,17 +1,19 @@
 import { Component } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { TaskListComponent } from "./components/task-list/task-list.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
-    CommonModule, // Para diretivas comuns como *ngIf e *ngFor
-    RouterModule, // Para usar diretivas de roteamento como <router-outlet>
-  ],
+    CommonModule,
+    RouterModule,
+    TaskListComponent
+],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  title = 'Todo List Angular';
+  title = 'To-Do List Angular';
 }
