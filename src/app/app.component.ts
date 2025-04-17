@@ -16,4 +16,5 @@ import { TaskListComponent } from "./components/task-list/task-list.component";
 })
 export class AppComponent {
   title = 'To-Do List Angular';
+  currentYear = new Date().getFullYear();
 }
