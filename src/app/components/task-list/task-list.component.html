@@ -1,23 +1,94 @@
-<mat-card>
-  <mat-card-header>
-    <mat-card-title>Task List</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <mat-list>
-      <mat-list-item>
-        <app-task-item
-        *ngFor="let task of tasks"
-        [task]="task"
-        (editTask)="onEditTask(task)"
-        (deleteTask)="onDeleteTask(task.id)"
-      ></app-task-item>
-      </mat-list-item>
-    </mat-list>
-  </mat-card-content>
-  <mat-card-actions>
-    <mat-form-field appearance="fill">
-      <input matInput [(ngModel)]="newTask" placeholder="Nova tarefa" />
-    </mat-form-field>
-    <button mat-raised-button color="primary" (click)="onAddTask()">Adicionar</button>
-  </mat-card-actions>
-</mat-card>
+<div class="task-list-container">
+  <mat-card class="main-card">
+    <mat-card-header>
+      <mat-card-title>Lista de Tarefas</mat-card-title>
+      <mat-card-subtitle>Gerencie suas tarefas diárias</mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <!-- Formulário para adicionar nova tarefa -->
+      <div class="add-task-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Título da tarefa</mat-label>
+          <input matInput [(ngModel)]="newTaskTitle" placeholder="O que precisa ser feito?" />
+        </mat-form-field>
+        
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descrição (opcional)</mat-label>
+          <textarea matInput [(ngModel)]="newTaskDescription" placeholder="Detalhes da tarefa"></textarea>
+        </mat-form-field>
+        
+        <button mat-raised-button color="primary" (click)="onAddTask()" [disabled]="!newTaskTitle.trim()">
+          <mat-icon>add</mat-icon> Adicionar Tarefa
+        </button>
+      </div>
+      
+      <!-- Campo de pesquisa e filtros -->
+      <div class="search-filter-container">
+        <!-- Campo de pesquisa -->
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Pesquisar tarefas</mat-label>
+          <input matInput [(ngModel)]="searchText" (keyup)="applyFilter()" placeholder="Buscar por título ou descrição">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+        
+        <!-- Filtros por status -->
+        <div class="filters-container">
+          <mat-form-field appearance="outline">
+            <mat-label>Filtrar por status</mat-label>
+            <mat-select [(ngModel)]="filterStatus" (selectionChange)="applyFilter()">
+              <mat-option value="all">Todas</mat-option>
+              <mat-option value="active">Pendentes</mat-option>
+              <mat-option value="completed">Concluídas</mat-option>
+            </mat-select>
+          </mat-form-field>
+          
+          <button mat-button color="warn" *ngIf="hasCompletedTasks()" 
+                  (click)="clearCompletedTasks()" matTooltip="Remover tarefas concluídas">
+            <mat-icon>delete_sweep</mat-icon> Limpar concluídas
+          </button>
+        </div>
+      </div>
+      
+      <!-- Lista de tarefas com drag-and-drop -->
+      <div cdkDropList *ngIf="filteredTasks.length > 0; else noTasks" 
+           (cdkDropListDropped)="onDrop($event)" 
+           class="tasks-container">
+        <div *ngFor="let task of filteredTasks" cdkDrag class="task-drag-item">
+          <div class="drag-placeholder" *cdkDragPlaceholder></div>
+          <div class="drag-handle" cdkDragHandle>
+            <mat-icon>drag_indicator</mat-icon>
+          </div>
+          <app-task-item
+            [task]="task"
+            (editTask)="onEditTask(task)"
+            (deleteTask)="onDeleteTask(task.id)"
+            (toggleComplete)="onToggleTaskCompletion(task.id)"
+          ></app-task-item>
+        </div>
+      </div>
+      
+      <!-- Mensagem quando não há tarefas -->
+      <ng-template #noTasks>
+        <div class="no-tasks-message">
+          <mat-icon class="large-icon">assignment</mat-icon>
+          <p *ngIf="searchText && searchText.trim()">Nenhuma tarefa encontrada com "{{ searchText }}"</p>
+          <p *ngIf="!searchText || !searchText.trim()">
+            {{ filterStatus === 'all' ? 'Nenhuma tarefa adicionada ainda' : 
+               filterStatus === 'active' ? 'Nenhuma tarefa pendente' :
+               'Nenhuma tarefa concluída' }}
+          </p>
+        </div>
+      </ng-template>
+    </mat-card-content>
+    
+    <!-- Contador de tarefas -->
+    <mat-card-footer *ngIf="tasks.length > 0">
+      <div class="tasks-counter">
+        <span>{{ tasks.length }} {{ tasks.length === 1 ? 'tarefa' : 'tarefas' }} no total</span>
+        <span>{{ getPendingTasksCount() }} pendentes</span>
+        <span>{{ getCompletedTasksCount() }} concluídas</span>
+      </div>
+    </mat-card-footer>
+  </mat-card>
+</div>
